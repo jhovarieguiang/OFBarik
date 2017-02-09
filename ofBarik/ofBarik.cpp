@@ -8,11 +8,11 @@
 
 #include "ofBarik.hpp"
 
-void ofImageLib::TestMethod() {
+void ofBarik::TestMethod() {
     
 }
 
-ofImage ofImageLib::blurImage(ofImage img,int blur) {
+ofImage ofBarik::blurImage(ofImage img,int blur) {
     cvimg.setFromPixels(img.getPixels());
     cvimg.blur(blur);
     img.setFromPixels(cvimg.getPixels());
