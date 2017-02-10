@@ -20,9 +20,14 @@ private:
     ofShader shader_overlay;
 public:
     ofImage convertFBOtoImage(ofFbo fbo);
+    /*
     void drawAlphaMask(int x, int y,int w, int h);
     void drawOverLay(int x, int y,int w, int h);
     void setupShaderAlphaMask(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
     void setupShaderOverLay(ofImage imgback, ofImage imgfront, int w, int h);
+    */
+    
+   ofImage createAlphaMask(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
+   ofImage createOverLay(ofImage imgback, ofImage imgfront, int w, int h);
 };
 
