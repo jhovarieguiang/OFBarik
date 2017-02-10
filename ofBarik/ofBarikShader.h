@@ -5,15 +5,24 @@ class ofBarikShader {
 private:
     ofxCvColorImage cvimg;
     
-    ofImage imagemaskguide2;
-    ofImage imagetomask2;
-    ofFbo fbo2;
-    ofFbo maskFbo2;
-    ofShader shader2;
+    //for alphamask
+    ofImage imagemaskguide_alphamask;
+    ofImage imagetomask_alphamask;
+    ofFbo fbo_alphamask;
+    ofFbo maskFbo_alphamask;
+    ofShader shader_alphamask;
     
+    //for overlay
+    ofImage imafront_overlay;
+    ofImage imgback_overlay;
+    ofFbo fbo_overlay;
+    ofFbo maskFbo_overlay;
+    ofShader shader_overlay;
 public:
     ofImage convertFBOtoImage(ofFbo fbo);
-    void draw(int x, int y,int w, int h);
-    void setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
+    void drawAlphaMask(int x, int y,int w, int h);
+    void drawOverLay(int x, int y,int w, int h);
+    void setupShaderAlphaMask(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
+    void setupShaderOverLay(ofImage imgback, ofImage imgfront, int w, int h);
 };
 

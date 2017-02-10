@@ -9,45 +9,81 @@ ofImage ofBarikShader::convertFBOtoImage(ofFbo fbo) {
     return imgmagic;
 }
 
-void ofBarikShader::draw(int x, int y, int w, int h) {
-    maskFbo2.begin();
+void ofBarikShader::drawAlphaMask(int x, int y, int w, int h) {
+    maskFbo_alphamask.begin();
     ofClear(255, 255, 255, 255);
-    imagetomask2.draw(0, 0);
-    maskFbo2.end();
+    imagetomask_alphamask.draw(0, 0);
+    maskFbo_alphamask.end();
     
     //------------------------------------------- draw to final fbo.
-    fbo2.begin();
+    fbo_alphamask.begin();
     ofClear(0, 0, 0,255);
     
-    shader2.begin();
-    shader2.setUniformTexture("texturemaskguide", imagemaskguide2, 1); //2
-    shader2.setUniformTexture("imageMask", maskFbo2.getTextureReference(), 2);//4
+    shader_alphamask.begin();
+    shader_alphamask.setUniformTexture("texturemaskguide", imagemaskguide_alphamask, 1); //2
+    shader_alphamask.setUniformTexture("imageMask", maskFbo_alphamask.getTextureReference(), 2);//4
     
     // we are drawing this fbo so it is used just as a frame.
-    maskFbo2.draw(0, 0);
-    shader2.end();
-    fbo2.end();
+    maskFbo_alphamask.draw(0, 0);
+    shader_alphamask.end();
+    fbo_alphamask.end();
     
     //-------------------------------------------
-    fbo2.draw(x,y,w,h);
+    fbo_alphamask.draw(x,y,w,h);
 }
 
-void ofBarikShader::setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h) {
+void ofBarikShader::drawOverLay(int x, int y, int w, int h) {
+    maskFbo_overlay.begin();
+    ofClear(255, 255, 255, 255);
+    imgback_overlay.draw(0, 0);
+    maskFbo_overlay.end();
+    
+    //------------------------------------------- draw to final fbo.
+    fbo_overlay.begin();
+    ofClear(0, 0, 0,255);
+    
+    shader_overlay.begin();
+    shader_overlay.setUniformTexture("texturefront", imafront_overlay, 1); //2
+    shader_overlay.setUniformTexture("textureback", maskFbo_overlay.getTextureReference(), 2);//4
+    
+    // we are drawing this fbo so it is used just as a frame.
+    maskFbo_overlay.draw(0, 0);
+    shader_overlay.end();
+    fbo_overlay.end();
+    
+    //-------------------------------------------
+    fbo_overlay.draw(x,y,w,h);
+}
+
+void ofBarikShader::setupShaderAlphaMask(ofImage imgtomask, ofImage imgmaskguide, int w, int h) {
 #ifdef TARGET_OPENGLES
-    shader2.load("shadersES2/alphamask");
+    shader_alphamask.load("shadersES2/alphamask");
 #else
     if(ofIsGLProgrammableRenderer()){
-        shader2.load("shadersGL3/alphamask");
+        shader_alphamask.load("shadersGL3/alphamask");
     }else{
-        shader2.load("shadersGL2/alphamask");
+        shader_alphamask.load("shadersGL2/alphamask");
     }
 #endif
-    
-    imagemaskguide2 = imgmaskguide;
-    imagetomask2 = imgtomask;
-    
-    fbo2.allocate(w, h);
-    maskFbo2.allocate(w, h);
-    
+    imagemaskguide_alphamask = imgmaskguide;
+    imagetomask_alphamask = imgtomask;
+    fbo_alphamask.allocate(w, h);
+    maskFbo_alphamask.allocate(w, h);
+}
+
+void ofBarikShader::setupShaderOverLay(ofImage imgback, ofImage imgfront, int w, int h) {
+#ifdef TARGET_OPENGLES
+    shader_overlay.load("shadersES2/overlay");
+#else
+    if(ofIsGLProgrammableRenderer()){
+        shader_overlay.load("shadersGL3/overlay");
+    }else{
+        shader_overlay.load("shadersGL2/overlay");
+    }
+#endif
+    imafront_overlay = imgfront;
+    imgback_overlay = imgback;
+    fbo_overlay.allocate(w, h);
+    maskFbo_overlay.allocate(w, h);
 }
 
