@@ -1,36 +1,12 @@
 
 #include "ofBarikShader.h"
 
-void ofBarikShader::setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h) {
-#ifdef TARGET_OPENGLES
-    shader2.load("shadersES2/alphamask");
-#else
-    if(ofIsGLProgrammableRenderer()){
-        shader2.load("shadersGL3/alphamask");
-    }else{
-        shader2.load("shadersGL2/alphamask");
-    }
-#endif
-    
-    /*
-    // image.loadImage("mask.png");
-    imgmaskguide.loadImage("mask.png");
-    // imagemaskguide.loadImage("maskred.png");
-    // imageMask.loadImage("mask.jpg");
-    // image.loadImage("topLayer.png");
-    // imageMask.loadImage("mask.png");
-    
-    // imagetomask.loadImage("topLayer.png");
-    // bottomLayer
-    imgtomask.loadImage("bottomLayer.png");
-    */
-    
-    imagemaskguide2 = imgmaskguide;
-    imagetomask2 = imgtomask;
-    
-    fbo2.allocate(w, h);
-    maskFbo2.allocate(w, h);
-    
+ofImage ofBarikShader::convertFBOtoImage(ofFbo fbo) {
+    ofImage imgmagic;
+    ofPixels hiResPixels;
+    fbo.readToPixels(hiResPixels);
+     imgmagic.setFromPixels(hiResPixels);
+    return imgmagic;
 }
 
 void ofBarikShader::draw(int x, int y, int w, int h) {
@@ -54,5 +30,24 @@ void ofBarikShader::draw(int x, int y, int w, int h) {
     
     //-------------------------------------------
     fbo2.draw(x,y,w,h);
+}
+
+void ofBarikShader::setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h) {
+#ifdef TARGET_OPENGLES
+    shader2.load("shadersES2/alphamask");
+#else
+    if(ofIsGLProgrammableRenderer()){
+        shader2.load("shadersGL3/alphamask");
+    }else{
+        shader2.load("shadersGL2/alphamask");
+    }
+#endif
+    
+    imagemaskguide2 = imgmaskguide;
+    imagetomask2 = imgtomask;
+    
+    fbo2.allocate(w, h);
+    maskFbo2.allocate(w, h);
+    
 }
 

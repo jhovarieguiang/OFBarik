@@ -12,7 +12,8 @@ private:
     ofShader shader2;
     
 public:
-    void setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
+    ofImage convertFBOtoImage(ofFbo fbo);
     void draw(int x, int y,int w, int h);
+    void setupShader(ofImage imgtomask, ofImage imgmaskguide, int w, int h);
 };
 
