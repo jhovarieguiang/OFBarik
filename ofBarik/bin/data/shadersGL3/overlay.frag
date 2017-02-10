@@ -11,7 +11,6 @@ out vec4 outputColor;
 
 void main()
 {
-
     vec4 rTxt = texture(texturefront, texCoordVarying);
     vec4 mask = texture(textureback, texCoordVarying);
     

@@ -89,3 +89,45 @@ ofImage ofBarikShader::createOverLay(ofImage imgback, ofImage imgfront, int w, i
     fbo_overlay.draw(0,0,w,h);
     return convertFBOtoImage(fbo_overlay);
 }
+
+ofImage ofBarikShader::createAlphaBlend(ofImage imgback, ofImage imgfront, float mixturePercent,int w, int h) {
+    //setup FBO
+#ifdef TARGET_OPENGLES
+    shader_alphablend.load("shadersES2/alphablend");
+#else
+    if(ofIsGLProgrammableRenderer()){
+        shader_alphablend.load("shadersGL3/alphablend");
+    }else{
+        shader_alphablend.load("shadersGL2/alphablend");
+    }
+#endif
+    imafront_alphablend = imgfront;
+    imgback_alphablend = imgback;
+    fbo_alphablend.allocate(w, h);
+    maskFbo_alphablend.allocate(w, h);
+    
+    //draw FBO
+    maskFbo_alphablend.begin();
+    ofClear(255, 255, 255, 255);
+    imgback_alphablend.draw(0, 0);
+    maskFbo_alphablend.end();
+    
+    //------------------------------------------- draw to final fbo.
+    fbo_alphablend.begin();
+    ofClear(0, 0, 0,255);
+    
+    shader_alphablend.begin();
+    
+    shader_alphablend.setUniform1f("mixturePercent", mixturePercent);
+    shader_alphablend.setUniformTexture("texturefront", imafront_alphablend, 1); //2
+    shader_alphablend.setUniformTexture("textureback", maskFbo_alphablend.getTextureReference(), 2);//4
+    
+    // we are drawing this fbo so it is used just as a frame.
+    maskFbo_alphablend.draw(0, 0);
+    shader_alphablend.end();
+    fbo_alphablend.end();
+    
+    //-------------------------------------------
+    fbo_alphablend.draw(0,0,w,h);
+     return convertFBOtoImage(fbo_alphablend);
+}
